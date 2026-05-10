@@ -28,9 +28,6 @@ public class Classroom {
     @JoinColumn(name = "tutor_id")
     private User tutor;
 
-    @Column(name = "due_date")
-    private Date dueDate;
-
     @Column(name = "created_at")
     private Date createdAt;
 }

@@ -23,10 +23,12 @@ public class Lesson {
     private Classroom classroom;
 
     private String title;
+
     private String content;
 
     @Enumerated(EnumType.STRING)
     private Type type;
+
     private  String fileOrUrl;
 
     @Column(name = "due_date")
