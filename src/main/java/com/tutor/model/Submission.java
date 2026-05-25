@@ -36,6 +36,7 @@ public class Submission {
     private String aiFeedback;
 
     private int score;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
