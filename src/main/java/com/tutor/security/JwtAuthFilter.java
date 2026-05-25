@@ -40,9 +40,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Перевіряємо токен
         if (jwtService.isTokenValid(token)) {
             Long userId = jwtService.extractUserId(token);
+            String userName = jwtService.extractUserName(token);
 
             // Кладемо userId в request щоб контролер міг його взяти
             request.setAttribute("userId", userId);
+            request.setAttribute("userName", userName);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userId, null, List.of());

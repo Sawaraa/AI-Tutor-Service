@@ -17,7 +17,7 @@ import java.util.UUID;
 @Service
 public class ClassroomServiceImpl implements ClassroomService {
 
-    private final  ClassroomRepository classroomRepository;
+    private final ClassroomRepository classroomRepository;
     private final ClassroomMemberRepository classroomMemberRepository;
 
     public ClassroomServiceImpl(ClassroomRepository classroomRepository, ClassroomMemberRepository classroomMemberRepository) {
@@ -26,9 +26,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public ClassroomDTO createClassroom(ClassroomDTO classroomDTO, Long tutorId) {
+    public ClassroomDTO createClassroom(ClassroomDTO classroomDTO, Long tutorId, String tutorName) {
        User user = new User();
        user.setId(tutorId);
+       user.setFullName(tutorName);
 
        Classroom classroom = Classroom.builder()
                .name(classroomDTO.getName())
@@ -39,6 +40,13 @@ public class ClassroomServiceImpl implements ClassroomService {
                .build();
 
        Classroom saved = classroomRepository.save(classroom);
+
+       ClassroomMember member = ClassroomMember.builder()
+               .classroom(saved)
+               .user(user)
+               .role(Role.OWNER)
+               .build();
+       classroomMemberRepository.save(member);
 
        return ClassroomDTO.builder()
                .id(saved.getId())

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ClassroomService {
 
-    ClassroomDTO createClassroom(ClassroomDTO classroomDTO, Long tutorId);
+    ClassroomDTO createClassroom(ClassroomDTO classroomDTO, Long tutorId, String tutorName);
 
     void joinClassroom(String inviteCode, Long userId);
 

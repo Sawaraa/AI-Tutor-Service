@@ -1,10 +1,7 @@
 package com.tutor.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -13,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class Classroom {
     @Id
@@ -30,4 +28,8 @@ public class Classroom {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    public String getIf() {
+        return null;
+    }
 }
