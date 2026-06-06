@@ -8,6 +8,7 @@ import com.tutor.model.enums.Type;
 import com.tutor.repository.ClassroomMemberRepository;
 import com.tutor.repository.LessonRepository;
 import com.tutor.repository.SubmissionRepository;
+import com.tutor.repository.UserRepository;
 import com.tutor.service.SubmissionService;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,17 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final LessonRepository lessonRepository;
     private final SubmissionRepository  submissionRepository;
     private final AiGradingService aiGradingService;
+    private final GoogleDriveService googleDriveService;
 
     public SubmissionServiceImpl(ClassroomMemberRepository classroomMemberRepository,
                                  LessonRepository lessonRepository,
                                  SubmissionRepository submissionRepository,
-                                 AiGradingService aiGradingService) {
+                                 AiGradingService aiGradingService, GoogleDriveService googleDriveService) {
         this.classroomMemberRepository = classroomMemberRepository;
         this.lessonRepository = lessonRepository;
         this.submissionRepository = submissionRepository;
         this.aiGradingService = aiGradingService;
+        this.googleDriveService = googleDriveService;
     }
 
     @Override
@@ -157,9 +160,25 @@ public class SubmissionServiceImpl implements SubmissionService {
         submission.setStatus(Status.AI_CHECKING);
         submissionRepository.save(submission);
 
+        String taskText = lesson.getFileOrUrl() != null
+                ? googleDriveService.readDocumentContent(lesson.getFileOrUrl())
+                : null;
+
+        if (taskText == null || taskText.isBlank()) {
+            taskText = lesson.getContent();
+        }
+
+        String answerText = googleDriveService.readDocumentContent(
+                submission.getAnswerFileOrUrl()
+        );
+
+        if (answerText == null || answerText.isBlank()) {
+            answerText = submission.getAnswerFileOrUrl();
+        }
+
         AiResult aiResult = aiGradingService.gradeSubmission(
-                lesson.getContent(),
-                submission.getAnswerFileOrUrl(),
+                taskText,
+                answerText,
                 lesson.getMaxScore()
         );
 
