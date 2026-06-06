@@ -20,6 +20,7 @@ public class LessonDTO {
     private String content;
     private Type type;
     private String fileOrUrl;
+    private Integer maxScore;
     private Date dueDate;
     private Date createdAt;
 

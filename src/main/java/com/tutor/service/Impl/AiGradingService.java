@@ -15,21 +15,23 @@ public class AiGradingService {
         this.chatClient = chatClientBuilder.build();
     }
 
-    public AiResult gradeSubmission(String taskDescription, String studentAnswer) {
+    public AiResult gradeSubmission(String taskDescription, String studentAnswer,  Integer maxScore) {
 
         String prompt = """
-                Ти — асистент викладача. Оціни відповідь студента на завдання.
-                
-                Завдання: %s
-                
-                Відповідь студента: %s
-                
-                Дай відповідь ТІЛЬКИ в такому форматі JSON:
-                {
-                  "score": (число від 0 до 100),
-                  "feedback": "детальний розбір — що студент зрозумів добре і що треба покращити"
-                }
-                """.formatted(taskDescription, studentAnswer);
+            Ти — асистент викладача. Оціни відповідь студента на завдання.
+            
+            Завдання: %s
+            
+            Відповідь студента: %s
+            
+            Максимальна оцінка за це завдання: %d балів
+            
+            Дай відповідь ТІЛЬКИ в такому форматі JSON:
+            {
+              "score": (число від 0 до %d),
+              "feedback": "детальний розбір"
+            }
+            """.formatted(taskDescription, studentAnswer, maxScore, maxScore);
 
         String response = chatClient.prompt()
                 .user(prompt)

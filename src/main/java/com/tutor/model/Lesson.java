@@ -31,6 +31,9 @@ public class Lesson {
 
     private  String fileOrUrl;
 
+    @Column(name = "max_score")
+    private Integer maxScore;
+
     @Column(name = "due_date")
     private Date dueDate;
 

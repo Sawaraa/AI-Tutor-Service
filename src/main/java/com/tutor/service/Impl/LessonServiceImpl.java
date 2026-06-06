@@ -43,22 +43,14 @@ public class LessonServiceImpl implements LessonService {
                 .content(lessonDTO.getContent())
                 .type(lessonDTO.getType())
                 .fileOrUrl(lessonDTO.getFileOrUrl())
+                .maxScore(lessonDTO.getMaxScore())
                 .dueDate(lessonDTO.getDueDate())
                 .createdAt(new Date())
                 .build();
 
         Lesson saved = lessonRepository.save(lesson);
 
-        return LessonDTO.builder()
-                .id(saved.getId())
-                .classroomId(saved.getClassroom().getId())
-                .title(saved.getTitle())
-                .content(saved.getContent())
-                .type(saved.getType())
-                .fileOrUrl(saved.getFileOrUrl())
-                .dueDate(saved.getDueDate())
-                .createdAt(saved.getCreatedAt())
-                .build();
+        return toDTO(saved);
     }
 
     @Override
@@ -72,16 +64,7 @@ public class LessonServiceImpl implements LessonService {
         List<Lesson> lessonsList = lessonRepository.findByClassroomIdOrderByCreatedAtDesc(classroom.getId());
 
         return lessonsList.stream()
-                .map(lessons -> LessonDTO.builder()
-                        .id(lessons.getId())
-                        .classroomId(lessons.getClassroom().getId())
-                        .title(lessons.getTitle())
-                        .content(lessons.getContent())
-                        .type(lessons.getType())
-                        .fileOrUrl(lessons.getFileOrUrl())
-                        .dueDate(lessons.getDueDate())
-                        .createdAt(lessons.getCreatedAt())
-                        .build())
+                .map(this::toDTO)
                 .toList();
     }
 
@@ -97,16 +80,7 @@ public class LessonServiceImpl implements LessonService {
         classroomMemberRepository.findByClassroomIdAndUserId(lesson.getClassroom().getId(), userId)
                 .orElseThrow(() -> new RuntimeException("You are not a member of this class"));
 
-        return LessonDTO.builder()
-                .id(lesson.getId())
-                .classroomId(lesson.getClassroom().getId())
-                .title(lesson.getTitle())
-                .content(lesson.getContent())
-                .type(lesson.getType())
-                .fileOrUrl(lesson.getFileOrUrl())
-                .dueDate(lesson.getDueDate())
-                .createdAt(lesson.getCreatedAt())
-                .build();
+        return toDTO(lesson);
     }
 
     @Override
@@ -139,16 +113,7 @@ public class LessonServiceImpl implements LessonService {
 
         Lesson saved = lessonRepository.save(updated);
 
-        return LessonDTO.builder()
-                .id(saved.getId())
-                .classroomId(saved.getClassroom().getId())
-                .title(saved.getTitle())
-                .content(saved.getContent())
-                .type(saved.getType())
-                .fileOrUrl(saved.getFileOrUrl())
-                .dueDate(saved.getDueDate())
-                .createdAt(saved.getCreatedAt())
-                .build();
+        return toDTO(saved);
     }
 
     @Override
@@ -168,5 +133,19 @@ public class LessonServiceImpl implements LessonService {
         }
 
         lessonRepository.delete(lesson);
+    }
+
+    private LessonDTO toDTO(Lesson lesson) {
+        return LessonDTO.builder()
+                .id(lesson.getId())
+                .classroomId(lesson.getClassroom().getId())
+                .title(lesson.getTitle())
+                .content(lesson.getContent())
+                .type(lesson.getType())
+                .fileOrUrl(lesson.getFileOrUrl())
+                .maxScore(lesson.getMaxScore())
+                .dueDate(lesson.getDueDate())
+                .createdAt(lesson.getCreatedAt())
+                .build();
     }
 }

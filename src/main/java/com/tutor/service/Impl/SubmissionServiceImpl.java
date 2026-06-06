@@ -22,7 +22,10 @@ public class SubmissionServiceImpl implements SubmissionService {
     private final SubmissionRepository  submissionRepository;
     private final AiGradingService aiGradingService;
 
-    public SubmissionServiceImpl(ClassroomMemberRepository classroomMemberRepository, LessonRepository lessonRepository, SubmissionRepository submissionRepository, AiGradingService aiGradingService) {
+    public SubmissionServiceImpl(ClassroomMemberRepository classroomMemberRepository,
+                                 LessonRepository lessonRepository,
+                                 SubmissionRepository submissionRepository,
+                                 AiGradingService aiGradingService) {
         this.classroomMemberRepository = classroomMemberRepository;
         this.lessonRepository = lessonRepository;
         this.submissionRepository = submissionRepository;
@@ -69,7 +72,8 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         AiResult aiResult = aiGradingService.gradeSubmission(
                 lesson.getContent(),
-                saved.getAnswerFileOrUrl()
+                saved.getAnswerFileOrUrl(),
+                lesson.getMaxScore()
         );
 
         saved.setAiScore(aiResult.getScore());
