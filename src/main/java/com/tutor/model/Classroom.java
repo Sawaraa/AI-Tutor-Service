@@ -29,7 +29,4 @@ public class Classroom {
     @Column(name = "created_at")
     private Date createdAt;
 
-    public String getIf() {
-        return null;
-    }
 }

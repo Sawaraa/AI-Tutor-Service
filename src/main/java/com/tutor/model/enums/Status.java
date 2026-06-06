@@ -1,7 +1,8 @@
 package com.tutor.model.enums;
 
 public enum Status {
-    SEND,
+    SENT,
     AI_CHECKING,
-    COMPLETED
+    AI_REVIEWED,
+    GRADED
 }

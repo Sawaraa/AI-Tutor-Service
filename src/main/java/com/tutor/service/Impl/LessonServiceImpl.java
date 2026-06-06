@@ -4,7 +4,6 @@ import com.tutor.dto.LessonDTO;
 import com.tutor.model.Classroom;
 import com.tutor.model.ClassroomMember;
 import com.tutor.model.Lesson;
-import com.tutor.model.User;
 import com.tutor.model.enums.Role;
 import com.tutor.repository.ClassroomMemberRepository;
 import com.tutor.repository.LessonRepository;

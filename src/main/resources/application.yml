@@ -1,9 +1,16 @@
 spring:
   application:
     name: tutor-service
+  ai:
+    openai:
+      api-key: ${GEMINI_API_KEY}
+      base-url: https://generativelanguage.googleapis.com/v1beta/openai
+      chat:
+        options:
+          model: gemini-2.5-flash
 
   datasource:
-    url:  ${DB_URL}
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -19,3 +26,5 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+
+

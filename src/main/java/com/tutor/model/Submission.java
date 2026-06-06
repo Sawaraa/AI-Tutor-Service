@@ -2,10 +2,7 @@ package com.tutor.model;
 
 import com.tutor.model.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -14,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class Submission {
 
@@ -32,10 +30,13 @@ public class Submission {
     @Column(name = "answer_file_url")
     private String answerFileOrUrl;
 
-    @Column(name = "ai_feedback")
+    @Column(name = "ai_feedback", columnDefinition = "TEXT")
     private String aiFeedback;
 
-    private int score;
+    private int aiScore;
+
+    @Column(name = "tutor_score")
+    private Integer tutorScore;
 
     @Enumerated(EnumType.STRING)
     private Status status;
