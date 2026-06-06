@@ -58,7 +58,7 @@ public class LessonServiceImpl implements LessonService {
         Classroom classroom = new Classroom();
         classroom.setId(classroomId);
 
-        ClassroomMember member =  classroomMemberRepository.findByClassroomIdAndUserId(classroomId, userId)
+        classroomMemberRepository.findByClassroomIdAndUserId(classroomId, userId)
                 .orElseThrow(() -> new RuntimeException("You are not a member of this class"));
 
         List<Lesson> lessonsList = lessonRepository.findByClassroomIdOrderByCreatedAtDesc(classroom.getId());

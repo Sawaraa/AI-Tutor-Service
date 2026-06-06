@@ -67,36 +67,76 @@ public class SubmissionServiceImpl implements SubmissionService {
 
         Submission saved = submissionRepository.save(submission);
 
-        saved.setStatus(Status.AI_CHECKING);
-        submissionRepository.save(submission);
-
-        AiResult aiResult = aiGradingService.gradeSubmission(
-                lesson.getContent(),
-                saved.getAnswerFileOrUrl(),
-                lesson.getMaxScore()
-        );
-
-        saved.setAiScore(aiResult.getScore());
-        saved.setAiFeedback(aiResult.getFeedback());
-        saved.setStatus(Status.AI_REVIEWED);
-        submissionRepository.save(saved);
+        processAiGrading(saved, lesson);
 
         return toDTO(saved);
     }
 
     @Override
-    public SubmissionDTO getMySubmission(Long lessonId, Long userId) {
-        return null;
+    public SubmissionDTO getMySubmission(Long classroomId, Long lessonId, Long userId) {
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+        if (!lesson.getClassroom().getId().equals(classroomId)) {
+            throw new RuntimeException("Lesson does not belong to this classroom");
+        }
+
+        classroomMemberRepository.findByClassroomIdAndUserId(classroomId, userId)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this class"));
+
+        Submission submission = submissionRepository.findByLessonIdAndStudentId(lessonId, userId)
+                .orElseThrow(() -> new RuntimeException("You have not submitted this task yet"));
+
+        return toDTO(submission);
     }
 
     @Override
-    public List<SubmissionDTO> getAllSubmissions(Long lessonId, Long userId) {
-        return List.of();
+    public List<SubmissionDTO> getAllSubmissions(Long classroomId, Long lessonId, Long userId) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+        if (!lesson.getClassroom().getId().equals(classroomId)) {
+            throw new RuntimeException("Lesson does not belong to this classroom");
+        }
+
+        ClassroomMember member = classroomMemberRepository
+                .findByClassroomIdAndUserId(classroomId, userId)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this class"));
+
+        if (member.getRole() != Role.OWNER) {
+            throw new RuntimeException("Only tutor can view all submissions");
+        }
+
+        return submissionRepository.findByLessonId(lessonId)
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     @Override
     public SubmissionDTO gradeSubmission(Long submissionId, Integer tutorScore, Long userId) {
-        return null;
+
+        Submission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() -> new RuntimeException("Submission not found"));
+
+        Lesson lesson = lessonRepository.findById(submission.getLesson().getId())
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+        ClassroomMember member = classroomMemberRepository
+                .findByClassroomIdAndUserId(lesson.getClassroom().getId(), userId)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this class"));
+
+        if (member.getRole() != Role.OWNER) {
+            throw new RuntimeException("Only tutor can grade submissions");
+        }
+
+        submission.setTutorScore(tutorScore);
+        submission.setStatus(Status.GRADED);
+
+        Submission saved = submissionRepository.save(submission);
+
+        return toDTO(saved);
     }
 
     private SubmissionDTO toDTO(Submission submission) {
@@ -111,5 +151,21 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .status(submission.getStatus())
                 .submittedAt(submission.getSubmittedAt())
                 .build();
+    }
+
+    private void processAiGrading(Submission submission, Lesson lesson) {
+        submission.setStatus(Status.AI_CHECKING);
+        submissionRepository.save(submission);
+
+        AiResult aiResult = aiGradingService.gradeSubmission(
+                lesson.getContent(),
+                submission.getAnswerFileOrUrl(),
+                lesson.getMaxScore()
+        );
+
+        submission.setAiScore(aiResult.getScore());
+        submission.setAiFeedback(aiResult.getFeedback());
+        submission.setStatus(Status.AI_REVIEWED);
+        submissionRepository.save(submission);
     }
 }

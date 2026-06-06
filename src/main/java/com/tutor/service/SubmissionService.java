@@ -9,10 +9,10 @@ public interface SubmissionService {
     SubmissionDTO submitAnswer(Long classroomId, Long lessonId, SubmissionDTO submissionDTO, Long userId);
 
     // Студент дивиться свою здачу + AI feedback
-    SubmissionDTO getMySubmission(Long lessonId, Long userId);
+    SubmissionDTO getMySubmission(Long classroomId, Long lessonId, Long userId);
 
     // Репетитор дивиться всі здачі по завданню
-    List<SubmissionDTO> getAllSubmissions(Long lessonId, Long userId);
+    List<SubmissionDTO> getAllSubmissions(Long classroomId, Long lessonId, Long userId);
 
     // Репетитор ставить фінальну оцінку
     SubmissionDTO gradeSubmission(Long submissionId, Integer tutorScore, Long userId);

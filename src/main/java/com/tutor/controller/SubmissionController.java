@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/classrooms/{classroomId}/lessons/{lessonId}/submissions")
 @RequiredArgsConstructor
@@ -25,32 +27,34 @@ public class SubmissionController {
         return ResponseEntity.ok(submissionService.submitAnswer(classroomId, lessonId, submissionDTO, userId));
     }
 
-//    // Студент дивиться свою здачу
-//    @GetMapping("/my")
-//    public ResponseEntity<SubmissionDTO> getMySubmission(
-//            @PathVariable Long lessonId,
-//            HttpServletRequest request) {
-//        Long userId = (Long) request.getAttribute("userId");
-//        return ResponseEntity.ok(submissionService.getMySubmission(lessonId, userId));
-//    }
-//
-//    // Репетитор дивиться всі здачі
-//    @GetMapping
-//    public ResponseEntity<List<SubmissionDTO>> getAllSubmissions(
-//            @PathVariable Long lessonId,
-//            HttpServletRequest request) {
-//        Long userId = (Long) request.getAttribute("userId");
-//        issionService.getAllSubmissions(lessonId, userId));
-//    }
-//
-//    // Репетитор ставить фінальну оцінку
-//    @PutMapping("/{submissionId}/grade")
-//    public ResponseEntity<SubmissionDTO> gradeSubmission(
-//            @PathVariable Long submissionId,
-//            @RequestParam Integer tutorScore,
-//            HttpServletRequest request) {
-//        Long userId = (Long) request.getAttribute("userId");
-//        return ResponseEntity.ok(submissionService.gradeSubmission(submissionId, tutorScore, userId));
-//    }
+    // Студент дивиться свою здачу
+    @GetMapping("/my")
+    public ResponseEntity<SubmissionDTO> getMySubmission(
+            @PathVariable Long classroomId,
+            @PathVariable Long lessonId,
+            HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return ResponseEntity.ok(submissionService.getMySubmission(classroomId, lessonId, userId));
+    }
+
+    // Репетитор дивиться всі здачі
+    @GetMapping
+    public ResponseEntity<List<SubmissionDTO>> getAllSubmissions(
+            @PathVariable Long classroomId,
+            @PathVariable Long lessonId,
+            HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return ResponseEntity.ok(submissionService.getAllSubmissions(classroomId, lessonId, userId));
+    }
+
+    // Репетитор ставить фінальну оцінку
+    @PutMapping("/{submissionId}/grade")
+    public ResponseEntity<SubmissionDTO> gradeSubmission(
+            @PathVariable Long submissionId,
+            @RequestParam Integer tutorScore,
+            HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return ResponseEntity.ok(submissionService.gradeSubmission(submissionId, tutorScore, userId));
+    }
 
 }
